@@ -28,16 +28,18 @@ class User(db.Model):
     password = db.Column(db.String())
     country_code = db.Column(db.String(3), db.ForeignKey('countries.alpha2'))
     is_public = db.Column(db.Boolean())
-    phone_number = db.Column(db.String(21))
+    phone = db.Column(db.String(21))
     image = db.Column(db.String(201))
+    last_password_set = db.Column(db.Float())
 
-    def __init__(self, login, email, country_code, is_public, phone_number, image):
+    def __init__(self, login, email, country_code, is_public, phone, image, last_password_set):
         self.login = login
         self.email = email
         self.country_code = country_code
         self.is_public = is_public
-        self.phone_number = phone_number
+        self.phone = phone
         self.image = image
+        self.last_password_set = last_password_set
 
 
     def set_password(self, password: str):
@@ -58,4 +60,5 @@ class User(db.Model):
                 'email': self.email,
                 'countryCode': self.country_code,
                 'isPublic': self.is_public,
-                'phone': self.phone_number}
+                'phone': self.phone,
+                'image': self.image}
