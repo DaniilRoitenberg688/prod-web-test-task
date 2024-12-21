@@ -18,7 +18,7 @@ def requires_user(func):
         try:
             payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
         except Exception as e:
-            return jsonify({'reason': 'Invalid token'}), 401
+            return jsonify({'reason': 'error while decode token'}), 401
 
         user_id = payload.get('user_id')
         created_at = payload.get('created_at')
@@ -34,7 +34,8 @@ def requires_user(func):
             return jsonify({'reason': 'Token expired'}), 401
 
         if created_at < user.last_password_set:
-            return jsonify({'reason': 'invalid token'}), 401
+            print(created_at, user.last_password_set)
+            return jsonify({'reason': 'not valid token'}), 401
 
         return func(user, *args, **kwargs)
 
@@ -99,6 +100,11 @@ def register():
     if User.query.filter_by(login=login).first():
         return jsonify({'reason': 'not uniq login'}), 409
 
+    if User.query.filter_by(phone=phone).first():
+        return jsonify({'reason': 'not uniq phone'}), 409
+
+
+
     new_user = User(login=login,
                     email=email,
                     country_code=country_code,
@@ -119,6 +125,7 @@ def register():
 @app.route('/api/auth/sign-in', methods=['POST'])
 def login():
     data = request.get_json()
+    print(data)
     user_login = data.get('login')
     password = data.get('password')
 
@@ -237,4 +244,4 @@ def update_password(user):
 
 
 if __name__ == "__main__":
-    app.run(port=8080, debug=True)
+    app.run(port=57424, debug=True)

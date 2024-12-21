@@ -2,7 +2,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from config import db
 
 
-
 class Country(db.Model):
     __tablename__ = "countries"
     id = db.Column(db.Integer, primary_key=True)
@@ -30,7 +29,7 @@ class User(db.Model):
     is_public = db.Column(db.Boolean())
     phone = db.Column(db.String(21))
     image = db.Column(db.String(201))
-    last_password_set = db.Column(db.Float())
+    last_password_set = db.Column(db.Integer())
 
     def __init__(self, login, email, country_code, is_public, phone, image, last_password_set):
         self.login = login
@@ -40,7 +39,6 @@ class User(db.Model):
         self.phone = phone
         self.image = image
         self.last_password_set = last_password_set
-
 
     def set_password(self, password: str):
         if len(password) < 6:
@@ -56,9 +54,13 @@ class User(db.Model):
         return check_password_hash(self.password, password)
 
     def to_dict(self):
-        return {'login': self.login,
+        user = {'login': self.login,
                 'email': self.email,
                 'countryCode': self.country_code,
                 'isPublic': self.is_public,
-                'phone': self.phone,
-                'image': self.image}
+                'phone': self.phone}
+        if self.image:
+            user['image'] = self.image
+
+        return user
+
