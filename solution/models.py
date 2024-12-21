@@ -57,10 +57,13 @@ class User(db.Model):
         user = {'login': self.login,
                 'email': self.email,
                 'countryCode': self.country_code,
-                'isPublic': self.is_public,
-                'phone': self.phone}
+                'isPublic': self.is_publicЪ}
+
         if self.image:
             user['image'] = self.image
+
+        if self.phone:
+            user['phone'] = self.phone
 
         return user
 
